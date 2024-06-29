@@ -77850,7 +77850,7 @@ c=b9==null?A.cg(c.b.h(0,"content-type")):b9
 b9=b8
 c0=b4
 c1=b1
-c2=new A.h2(null,"http://192.168.0.8:8080/api/v1/gpt",null,null,null,$,$,null,a8,a,a4,a9,b0,c1,b2,a7,b3,c0,b5,b6,b7,b9)
+c2=new A.h2(null,"http:/localhost:8080/api/v1/gpt",null,null,null,$,$,null,a8,a,a4,a9,b0,c1,b2,a7,b3,c0,b5,b6,b7,b9)
 c2.HI(c,a7,b3,a5,b8,b4,a8,b5,a,b2,a9,b6,b7,b0,a4,b1)
 c2.ch=a2
 c2.rz$=a3
