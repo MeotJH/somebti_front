@@ -48,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _startStream(String content) async {
     const mbti = 'INFP';
-    const url = 'http:/localhost:8080/api/v1/gpt';
+    const url = '/api/v1/gpt';
 
     try {
       setState(() {
