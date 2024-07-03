@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -12,7 +11,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatPage> {
-  Uuid uuid = const Uuid();
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
@@ -22,7 +20,6 @@ class _ChatScreenState extends State<ChatPage> {
   void _handleSubmitted(String text) {
     _textController.clear();
     ChatMessage myMessage = ChatMessage(
-      id: uuid.v4(),
       text: text,
       sender: 'Me',
       isMe: true,
@@ -54,11 +51,11 @@ class _ChatScreenState extends State<ChatPage> {
       const decoder = Utf8Decoder();
 
       var message = '';
-      var uuidTemp = uuid.v4();
+      final GlobalKey<_ChatMessageState> chatMessageKey = GlobalKey<_ChatMessageState>();
       _messages.insert(
         0,
         ChatMessage(
-          id: uuidTemp,
+          key: chatMessageKey,
           text: message,
           sender: 'You',
           isMe: false,
@@ -70,8 +67,10 @@ class _ChatScreenState extends State<ChatPage> {
         for (var line in lines) {
           final Map<String, dynamic> decoded = jsonDecode(line);
           final tempMessage = decoded['message'] as String;
-          var foundItem = _messages.firstWhere((item) => item.id == uuidTemp);
-          foundItem.text = foundItem.text + tempMessage;
+          message = message + tempMessage;
+          setState(() {
+            chatMessageKey.currentState!.setText(message);
+          });
         }
       }
       setState(() {
@@ -157,13 +156,36 @@ class _ChatScreenState extends State<ChatPage> {
   }
 }
 
-class ChatMessage extends StatelessWidget {
-  ChatMessage({super.key, required this.id, required this.text, required this.sender, required this.isMe});
+class ChatMessage extends StatefulWidget {
+  const ChatMessage({
+    super.key,
+    required this.text,
+    required this.sender,
+    required this.isMe,
+  });
 
-  final String id;
-  String text;
+  final String text;
   final String sender;
   final bool isMe;
+
+  @override
+  _ChatMessageState createState() => _ChatMessageState();
+}
+
+class _ChatMessageState extends State<ChatMessage> {
+  late String _text;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.text;
+  }
+
+  void setText(String newText) {
+    setState(() {
+      _text = newText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,39 +193,39 @@ class ChatMessage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+        mainAxisAlignment: widget.isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
         children: <Widget>[
-          if (isMe)
+          if (widget.isMe)
             Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(child: Text(sender[0])),
+              child: CircleAvatar(child: Text(widget.sender[0])),
             ),
-          if (!isMe)
+          if (!widget.isMe)
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Text(sender, style: Theme.of(context).textTheme.titleMedium),
+                Text(widget.sender, style: Theme.of(context).textTheme.titleMedium),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
-                  child: Text(text),
+                  child: Text(_text),
                 ),
               ],
             ),
-          if (isMe)
+          if (widget.isMe)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(sender, style: Theme.of(context).textTheme.titleMedium),
+                Text(widget.sender, style: Theme.of(context).textTheme.titleMedium),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
-                  child: Text(text),
+                  child: Text(_text),
                 ),
               ],
             ),
-          if (!isMe)
+          if (!widget.isMe)
             Container(
               margin: const EdgeInsets.only(left: 16.0),
-              child: CircleAvatar(child: Text(sender[0])),
+              child: CircleAvatar(child: Text(widget.sender[0])),
             ),
         ],
       ),
