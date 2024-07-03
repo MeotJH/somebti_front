@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:somebti_front/components/list_item.dart';
+import 'package:somebti_front/constants/mbti_constant.dart';
 
 class DirectMessagePage extends StatelessWidget {
   const DirectMessagePage({super.key});
@@ -40,68 +41,14 @@ class DirectMessagePage extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              children: const [
-                ListItem(
-                  name: 'INFP',
-                  message: '반가워 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENTJ',
-                  message: '어쩌라고 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENFP',
-                  message: '헤헤헤헤',
-                ),
-                ListItem(
-                  name: 'INFP',
-                  message: '반가워 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENTJ',
-                  message: '어쩌라고 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENFP',
-                  message: '헤헤헤헤',
-                ),
-                ListItem(
-                  name: 'INFP',
-                  message: '반가워 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENTJ',
-                  message: '어쩌라고 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENFP',
-                  message: '헤헤헤헤',
-                ),
-                ListItem(
-                  name: 'INFP',
-                  message: '반가워 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENTJ',
-                  message: '어쩌라고 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENFP',
-                  message: '헤헤헤헤',
-                ),
-                ListItem(
-                  name: 'INFP',
-                  message: '반가워 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENTJ',
-                  message: '어쩌라고 · 1시간',
-                ),
-                ListItem(
-                  name: 'ENFP',
-                  message: '헤헤헤헤',
-                ),
-              ],
+              children: MbtiConstant.types.map(
+                (type) {
+                  return ListItem(
+                    name: type,
+                    message: "${MbtiConstant.descriptions[type]} · 1시간 ",
+                  );
+                },
+              ).toList(),
             ),
           ),
         ],
