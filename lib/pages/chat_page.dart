@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -11,20 +12,24 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatPage> {
+  Uuid uuid = const Uuid();
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
+  String _test = "";
   bool _isLoading = false;
 
   void _handleSubmitted(String text) {
     _textController.clear();
     ChatMessage myMessage = ChatMessage(
+      id: uuid.v4(),
       text: text,
       sender: 'Me',
       isMe: true,
     );
     setState(() {
       _messages.insert(0, myMessage);
+      _test = _test + text;
     });
     _startStream(text);
   }
@@ -49,26 +54,27 @@ class _ChatScreenState extends State<ChatPage> {
       const decoder = Utf8Decoder();
 
       var message = '';
+      var uuidTemp = uuid.v4();
+      _messages.insert(
+        0,
+        ChatMessage(
+          id: uuidTemp,
+          text: message,
+          sender: 'You',
+          isMe: false,
+        ),
+      );
       await for (final chunk in reader) {
         final text = decoder.convert(chunk);
         final lines = const LineSplitter().convert(text);
         for (var line in lines) {
           final Map<String, dynamic> decoded = jsonDecode(line);
           final tempMessage = decoded['message'] as String;
-          setState(() {
-            message = message + tempMessage;
-          });
+          var foundItem = _messages.firstWhere((item) => item.id == uuidTemp);
+          foundItem.text = foundItem.text + tempMessage;
         }
       }
       setState(() {
-        _messages.insert(
-          0,
-          ChatMessage(
-            text: message,
-            sender: 'You',
-            isMe: false,
-          ),
-        );
         //_currentMessage = ""; // 누적된 메시지 초기화
       });
 
@@ -88,10 +94,10 @@ class _ChatScreenState extends State<ChatPage> {
   }
 
   Widget _buildTextComposer() {
-    print('Theme.of(context).primaryColor: ${Theme.of(context).primaryColor}');
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).primaryColor),
       child: Container(
+        color: Colors.white,
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
@@ -104,6 +110,7 @@ class _ChatScreenState extends State<ChatPage> {
                 onSubmitted: _handleSubmitted,
               ),
             ),
+            Text(_test),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
@@ -151,9 +158,10 @@ class _ChatScreenState extends State<ChatPage> {
 }
 
 class ChatMessage extends StatelessWidget {
-  const ChatMessage({super.key, required this.text, required this.sender, required this.isMe});
+  ChatMessage({super.key, required this.id, required this.text, required this.sender, required this.isMe});
 
-  final String text;
+  final String id;
+  String text;
   final String sender;
   final bool isMe;
 
