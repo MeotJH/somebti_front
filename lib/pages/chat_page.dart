@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:somebti_front/providers/dio_provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -39,7 +40,9 @@ class _ChatScreenState extends State<ChatPage> {
     });
 
     _test = "";
-    DioProvider.fetchStreamData(content: text, onMessageReceived: _onMessageReceived);
+    final state = GoRouterState.of(context);
+    final mbti = state.uri.queryParameters['mbti'];
+    DioProvider.fetchStreamData(query: {'mbti': mbti, 'content': text}, onMessageReceived: _onMessageReceived);
   }
 
   void _onMessageReceived(String message) {
@@ -132,19 +135,21 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('this is text: $text');
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
-          if (isMe)
+          if (!isMe)
             Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(child: Text(sender[0])),
+              child: CircleAvatar(
+                backgroundColor: Colors.pink[300],
+                child: Text(sender[0]),
+              ),
             ),
-          if (!isMe)
+          if (isMe)
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
@@ -156,20 +161,25 @@ class ChatMessage extends StatelessWidget {
               ],
             ),
           if (isMe)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(sender, style: Theme.of(context).textTheme.titleMedium),
-                Container(
-                  margin: const EdgeInsets.only(top: 5.0),
-                  child: Text(text),
-                ),
-              ],
-            ),
-          if (!isMe)
             Container(
               margin: const EdgeInsets.only(left: 16.0),
-              child: CircleAvatar(child: Text(sender[0])),
+              child: CircleAvatar(
+                backgroundColor: Colors.pink[50],
+                child: Text(sender[0]),
+              ),
+            ),
+          if (!isMe)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(sender, style: Theme.of(context).textTheme.titleMedium),
+                  Container(
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: Text(text),
+                  ),
+                ],
+              ),
             ),
         ],
       ),

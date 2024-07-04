@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:somebti_front/components/list_item.dart';
 import 'package:somebti_front/constants/mbti_constant.dart';
 
@@ -46,6 +47,11 @@ class DirectMessagePage extends StatelessWidget {
                   return ListItem(
                     name: type,
                     message: "${MbtiConstant.descriptions[type]} · 1시간 ",
+                    onTap: () {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        context.push('/chat?mbti=$type');
+                      });
+                    },
                   );
                 },
               ).toList(),

@@ -9,7 +9,7 @@ class DioProvider {
   static const String messageContent = "message";
 
   static Future<void> fetchStreamData({
-    required String content,
+    required Map query,
     required Function(String) onMessageReceived,
   }) async {
     String buffer = '';
@@ -17,7 +17,7 @@ class DioProvider {
     try {
       final response = await dio.get<ResponseBody>(
         chatEndPoint,
-        queryParameters: {'mbti': 'INFP', 'content': content},
+        queryParameters: {'mbti': query['mbti'], 'content': query['content']},
         options: Options(
           responseType: ResponseType.stream,
         ),

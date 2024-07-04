@@ -16,6 +16,7 @@ class ChatApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           elevation: 0,
+          scrolledUnderElevation: 0,
         ),
         primarySwatch: Colors.pink,
         primaryColor: Colors.pink,

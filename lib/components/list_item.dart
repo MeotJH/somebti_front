@@ -4,14 +4,16 @@ import 'package:go_router/go_router.dart';
 class ListItem extends StatelessWidget {
   final String name;
   final String message;
+  final Function() onTap;
 
-  const ListItem({super.key, required this.name, required this.message});
+  const ListItem({super.key, required this.name, required this.message, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.pink[50],
       splashColor: Colors.pink[50],
+      onTap: onTap,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.grey[200],
@@ -24,9 +26,6 @@ class ListItem extends StatelessWidget {
         ),
         trailing: const Icon(Icons.camera_alt_outlined),
       ),
-      onTap: () {
-        context.push('/chat');
-      },
     );
   }
 }
