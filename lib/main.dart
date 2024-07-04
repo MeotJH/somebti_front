@@ -20,6 +20,7 @@ class ChatApp extends StatelessWidget {
         ),
         primarySwatch: Colors.pink,
         primaryColor: Colors.pink,
+        fontFamily: 'NotoSansKR',
       ),
       routerConfig: router,
     );

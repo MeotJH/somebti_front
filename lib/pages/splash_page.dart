@@ -17,7 +17,7 @@ class _SplashPageState extends State<SplashPage> {
 
   _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 3), () {});
-    context.go('/dm');
+    context.go('/dm', extra: '/');
   }
 
   @override
@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset('images/sombti.jpg'),
+        child: Image.asset('images/sombti.png'),
       ),
     );
   }

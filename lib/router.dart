@@ -15,8 +15,25 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/dm',
-      builder: (BuildContext context, GoRouterState state) {
-        return const DirectMessagePage();
+      // builder: (BuildContext context, GoRouterState state) {
+      //   return const DirectMessagePage();
+      // },
+      pageBuilder: (context, state) {
+        final fromPage = state.extra as String?;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const DirectMessagePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            if (fromPage == '/') {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            } else {
+              return child;
+            }
+          },
+        );
       },
     ),
     GoRoute(
