@@ -1,4 +1,5 @@
 // mbti_constants.dart
+// ignore_for_file: constant_identifier_names
 
 class MbtiConstant {
   static const String INTJ = 'INTJ';

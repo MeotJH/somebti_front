@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:somebti_front/providers/dio_provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -15,10 +18,9 @@ class _ChatScreenState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
   String _test = "";
-  bool _isLoading = false;
-
   void _handleSubmitted(String text) {
     _textController.clear();
+    _test = "thinking...";
     ChatMessage myMessage = ChatMessage(
       text: text,
       sender: 'Me',
@@ -26,70 +28,31 @@ class _ChatScreenState extends State<ChatPage> {
     );
     setState(() {
       _messages.insert(0, myMessage);
-      _test = _test + text;
-    });
-    _startStream(text);
-  }
-
-  Future<void> _startStream(String content) async {
-    const mbti = 'INFP';
-    const url = '/api/v1/gpt';
-
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final response = await Dio().get<ResponseBody>(
-        url,
-        queryParameters: {'mbti': mbti, 'content': content},
-        options: Options(responseType: ResponseType.stream),
-      );
-
-      // Stream을 받아서 UTF8로 디코딩
-      final reader = response.data!.stream;
-      const decoder = Utf8Decoder();
-
-      var message = '';
-      final GlobalKey<_ChatMessageState> chatMessageKey = GlobalKey<_ChatMessageState>();
       _messages.insert(
         0,
         ChatMessage(
-          key: chatMessageKey,
-          text: message,
+          text: _test,
           sender: 'You',
           isMe: false,
         ),
       );
-      await for (final chunk in reader) {
-        final text = decoder.convert(chunk);
-        final lines = const LineSplitter().convert(text);
-        for (var line in lines) {
-          final Map<String, dynamic> decoded = jsonDecode(line);
-          final tempMessage = decoded['message'] as String;
-          message = message + tempMessage;
-          setState(() {
-            chatMessageKey.currentState!.setText(message);
-          });
-        }
-      }
-      setState(() {
-        //_currentMessage = ""; // 누적된 메시지 초기화
-      });
+    });
 
-      // 스크롤을 맨 아래로 이동
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    } catch (e) {
-      print('Error: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    _test = "";
+    DioProvider.fetchStreamData(content: text, onMessageReceived: _onMessageReceived);
+  }
+
+  void _onMessageReceived(String message) {
+    setState(() {
+      _test += message;
+      if (_messages.isNotEmpty) {
+        _messages[0] = ChatMessage(
+          text: _test,
+          sender: 'You',
+          isMe: false,
+        );
+      }
+    });
   }
 
   Widget _buildTextComposer() {
@@ -109,7 +72,6 @@ class _ChatScreenState extends State<ChatPage> {
                 onSubmitted: _handleSubmitted,
               ),
             ),
-            Text(_test),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
@@ -156,7 +118,7 @@ class _ChatScreenState extends State<ChatPage> {
   }
 }
 
-class ChatMessage extends StatefulWidget {
+class ChatMessage extends StatelessWidget {
   const ChatMessage({
     super.key,
     required this.text,
@@ -169,63 +131,45 @@ class ChatMessage extends StatefulWidget {
   final bool isMe;
 
   @override
-  _ChatMessageState createState() => _ChatMessageState();
-}
-
-class _ChatMessageState extends State<ChatMessage> {
-  late String _text;
-
-  @override
-  void initState() {
-    super.initState();
-    _text = widget.text;
-  }
-
-  void setText(String newText) {
-    setState(() {
-      _text = newText;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    print('this is text: $text');
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: widget.isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+        mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
         children: <Widget>[
-          if (widget.isMe)
+          if (isMe)
             Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(child: Text(widget.sender[0])),
+              child: CircleAvatar(child: Text(sender[0])),
             ),
-          if (!widget.isMe)
+          if (!isMe)
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Text(widget.sender, style: Theme.of(context).textTheme.titleMedium),
+                Text(sender, style: Theme.of(context).textTheme.titleMedium),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
-                  child: Text(_text),
+                  child: Text(text),
                 ),
               ],
             ),
-          if (widget.isMe)
+          if (isMe)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(widget.sender, style: Theme.of(context).textTheme.titleMedium),
+                Text(sender, style: Theme.of(context).textTheme.titleMedium),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
-                  child: Text(_text),
+                  child: Text(text),
                 ),
               ],
             ),
-          if (!widget.isMe)
+          if (!isMe)
             Container(
               margin: const EdgeInsets.only(left: 16.0),
-              child: CircleAvatar(child: Text(widget.sender[0])),
+              child: CircleAvatar(child: Text(sender[0])),
             ),
         ],
       ),
