@@ -26115,7 +26115,7 @@ c=b5==null?A.cp(c.b.h(0,"content-type")):b5
 b5=b4
 b6=b0
 b7=a7
-b8=new A.hK(null,"http://127.0.0.1:8080/api/v1/gpt",null,null,null,$,$,null,a3,e,a4,a5,a6,b7,a8,a2,a9,b6,b1,b2,b3,b5)
+b8=new A.hK(null,"/api/v1/gpt",null,null,null,$,$,null,a3,e,a4,a5,a6,b7,a8,a2,a9,b6,b1,b2,b3,b5)
 b8.JV(c,a2,a9,a0,b4,b0,a3,b1,e,a8,a5,b2,b3,a6,a4,a7)
 b8.ch=b
 b8.tv$=d0

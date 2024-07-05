@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 
 class DioProvider {
-  static const String url = 'http://127.0.0.1:8080';
+  static const String url = ""; //'http://127.0.0.1:8080';
   static const String chatEndPoint = '$url/api/v1/gpt';
   static const String jsonDelimiter = "}\n";
   static const String messageContent = "message";
