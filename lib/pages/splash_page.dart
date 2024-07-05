@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset('images/sombti.png'),
+        child: Image.asset('assets/images/sombti.png'),
       ),
     );
   }

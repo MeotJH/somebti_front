@@ -80480,7 +80480,7 @@ A.Hs(p).ul(0,"/dm","/")
 return A.U(null,r)}})
 return A.V($async$vI,r)},
 J(a){var s=null
-return A.a79(s,B.i,A.h5(new A.wF(A.aBB(s,s,new A.v9("images/sombti.png",s,s)),s),s,s))}}
+return A.a79(s,B.i,A.h5(new A.wF(A.aBB(s,s,new A.v9("assets/images/sombti.png",s,s)),s),s,s))}}
 A.ah0.prototype={
 $0(){},
 $S:12}
